@@ -15,7 +15,7 @@ public class BookHandler {
     @Autowired
     private BookRepository bookRepository;
 
-    @GetMapping("/findAll/{page}/{size}")
+    @GetMapping("/findAllfindAll/{page}/{size}")
     public Page<Book> findAll(@PathVariable("page") Integer page, @PathVariable("size") Integer size){
         PageRequest request = PageRequest.of(page,size);
         return bookRepository.findAll(request);

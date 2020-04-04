@@ -31,10 +31,9 @@ CREATE TABLE `book` (
   `price` float(10,2) DEFAULT NULL,
   `bookcaseid` int(10) DEFAULT NULL,
   `abled` int(10) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_ieh6qsxp6q7oydadktc9oc8t2` (`bookcaseid`),
-  CONSTRAINT `FK_ieh6qsxp6q7oydadktc9oc8t2` FOREIGN KEY (`bookcaseid`) REFERENCES `bookcase` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`)
+
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ngp.book.web.bookmanage.repository.BookMapper" >
+
+    <sql id="fields">
+        id,name,author,publish,pages,price,publish_date,book_type,book_count,book_desc
+    </sql>
+
+    <sql id="insertFields">
+        name,author,publish,pages,price,publish_date,book_type,book_count,book_desc
+    </sql>
+
+    <sql id="condition">
+
+    </sql>
+
+    <select id="queryAllBook" resultType="com.ngp.book.web.bookmanage.entity.Book" >
+        select <include refid="fields"/>  from book
+    </select>
+
+
+    <insert id="insertBook" parameterType="com.ngp.book.web.bookmanage.entity.Book" >
+        insert into book(<include refid="insertFields"/>) values (
+        #{book.name},#{book.author},#{book.publish},#{book.pages},#{book.price},now(),#{book.bookType},#{book.bookCount},#{book.bookDesc}
+        )
+
+    </insert>
+
+</mapper>
