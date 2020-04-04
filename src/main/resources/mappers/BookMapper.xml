@@ -14,8 +14,9 @@
 
     </sql>
 
-    <select id="queryAllBook" resultType="com.ngp.book.web.bookmanage.entity.Book" >
+    <select id="queryAllBook"  resultType="com.ngp.book.web.bookmanage.entity.Book" >
         select <include refid="fields"/>  from book
+        limit ${pageRequest.page} , ${pageRequest.size}
     </select>
 
 

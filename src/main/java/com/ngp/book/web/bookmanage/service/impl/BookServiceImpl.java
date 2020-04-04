@@ -1,10 +1,10 @@
 package com.ngp.book.web.bookmanage.service.impl;
 
+import com.ngp.book.web.bookmanage.config.PageInfo;
 import com.ngp.book.web.bookmanage.service.BookService;
 import com.ngp.book.web.bookmanage.entity.Book;
 import com.ngp.book.web.bookmanage.repository.BookMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,8 +21,8 @@ public class BookServiceImpl implements BookService {
     private BookMapper bookMapper;
 
     @Override
-    public List<Book> queryAllBook() {
-        return bookMapper.queryAllBook();
+    public List<Book> queryAllBook(PageInfo request) {
+        return bookMapper.queryAllBook(request);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.ngp.book.web.bookmanage.repository;
 
+import com.ngp.book.web.bookmanage.config.PageInfo;
 import com.ngp.book.web.bookmanage.entity.Book;
 import org.apache.ibatis.annotations.Param;
 
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public interface BookMapper {
 
-    List<Book> queryAllBook();
+    List<Book> queryAllBook(@Param("pageRequest") PageInfo pageRequest);
 
     int insertBook(@Param("book") Book book);
 }

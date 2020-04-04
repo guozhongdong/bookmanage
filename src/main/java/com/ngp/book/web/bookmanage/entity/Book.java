@@ -2,18 +2,12 @@ package com.ngp.book.web.bookmanage.entity;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Entity
 @Data
 public class Book {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Integer id;
 
     private String name;
@@ -26,8 +20,14 @@ public class Book {
 
     private BigDecimal price;
 
+    /**
+     * 是否有效
+     * */
     private Integer abled;
 
+    /**
+     * 发布日期
+     * */
     private Date publishDate;
     /**
      * 图书类别

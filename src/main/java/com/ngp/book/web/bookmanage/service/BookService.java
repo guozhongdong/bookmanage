@@ -1,5 +1,6 @@
 package com.ngp.book.web.bookmanage.service;
 
+import com.ngp.book.web.bookmanage.config.PageInfo;
 import com.ngp.book.web.bookmanage.entity.Book;
 
 
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public interface BookService {
 
-    List<Book> queryAllBook();
+    List<Book> queryAllBook(PageInfo request);
 
     int insertBook(Book book);
 }
