@@ -66,4 +66,24 @@ public class BookmanageApplicationTests {
         System.out.println(num);
     }
 
+    @Test
+    public void updateBook() {
+        Book book = new Book();
+        book.setId(1);
+        book.setAuthor("金庸");
+        book.setName("倚天屠龙记222");
+        book.setPublish("机械工业出版社");
+        book.setBookType("小说2");
+        book.setPages(900);
+        int num = bookService.updateBook(book);
+        System.out.println(num);
+    }
+
+    @Test
+    public void deleteBook() {
+
+        int num = bookService.deleteOne(1);
+        System.out.println(num);
+    }
+
 }

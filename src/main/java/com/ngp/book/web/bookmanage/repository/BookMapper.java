@@ -15,4 +15,13 @@ public interface BookMapper {
     List<Book> queryAllBook(@Param("pageRequest") PageInfo pageRequest);
 
     int insertBook(@Param("book") Book book);
+
+    /**
+     * 查询总条数
+     * */
+    int queryCount();
+
+    int updateBook(@Param("book") Book book);
+
+    int deleteOne(Integer id);
 }

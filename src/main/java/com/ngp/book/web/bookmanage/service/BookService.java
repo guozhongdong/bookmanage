@@ -15,4 +15,11 @@ public interface BookService {
     List<Book> queryAllBook(PageInfo request);
 
     int insertBook(Book book);
+
+    int queryCount();
+
+    int updateBook(Book book);
+
+    int deleteOne(Integer id);
+
 }

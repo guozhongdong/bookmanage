@@ -24,9 +24,9 @@ public class BookHandler {
         PageData<Book> pageData = new PageData();
         PageInfo request = new PageInfo();
         request.setSize(size);
-        request.setPage(page);
+        request.setPage((page-1)*size);
         pageData.setContent(bookService.queryAllBook(request));
-        pageData.setTotalElement(bookService.queryAllBook(request).size());
+        pageData.setTotalElement(bookService.queryCount());
         pageData.setSize(size);
         pageData.setNumber(page);
         return pageData;
@@ -44,16 +44,17 @@ public class BookHandler {
         return null;
     }
 
-    @PutMapping("/update")
+    @PostMapping("/update")
     public String update(@RequestBody Book book){
 
-        return "error";
+        return bookService.updateBook(book)+"";
 
     }
 
-    @DeleteMapping("/deleteById/{id}")
-    public void deleteById(@PathVariable("id") Integer id){
+    @GetMapping("/deleteById/{id}")
+    public String deleteById(@PathVariable("id") Integer id){
 
+        return bookService.deleteOne(id)+"";
 
     }
 }

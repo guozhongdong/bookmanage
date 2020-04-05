@@ -19,6 +19,10 @@
         limit ${pageRequest.page} , ${pageRequest.size}
     </select>
 
+    <select id="queryCount"  resultType="Integer" >
+        select count(*) from book
+    </select>
+
 
     <insert id="insertBook" parameterType="com.ngp.book.web.bookmanage.entity.Book" >
         insert into book(<include refid="insertFields"/>) values (
@@ -26,5 +30,23 @@
         )
 
     </insert>
+    <update id="updateBook" parameterType="com.ngp.book.web.bookmanage.entity.Book" >
+        update  book  set name =  #{book.name},
+                       author = #{book.author},
+                       publish = #{book.publish},
+                       pages = #{book.pages},
+                       price = #{book.price},
+                       publish_date = now(),
+                       book_type = #{book.bookType},
+                       book_count = #{book.bookCount},
+                       book_desc = #{book.bookDesc}
+        where id = #{book.id}
+
+    </update>
+
+    <update id="deleteOne" parameterType="Integer" >
+      delete   from book
+        where id = #{id}
+    </update>
 
 </mapper>
