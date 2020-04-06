@@ -1,6 +1,8 @@
 package com.ngp.book.web.bookmanage.service.impl;
 
 import com.ngp.book.web.bookmanage.config.PageInfo;
+import com.ngp.book.web.bookmanage.config.PageRequest;
+import com.ngp.book.web.bookmanage.result.Result;
 import com.ngp.book.web.bookmanage.service.BookService;
 import com.ngp.book.web.bookmanage.entity.Book;
 import com.ngp.book.web.bookmanage.repository.BookMapper;
@@ -21,27 +23,38 @@ public class BookServiceImpl implements BookService {
     private BookMapper bookMapper;
 
     @Override
-    public List<Book> queryAllBook(PageInfo request) {
-        return bookMapper.queryAllBook(request);
+    public PageInfo queryAllBook(PageRequest request) {
+        List<Book> list = bookMapper.queryAllBook(request);
+        int count = bookMapper.queryCount();
+        return new PageInfo(true,null,request.getPage(),request.getSize(),list,count);
     }
 
     @Override
-    public int insertBook(Book book) {
-        return bookMapper.insertBook(book);
+    public Result insertBook(Book book) {
+        Result result = new Result();
+        result.setResult(bookMapper.insertBook(book));
+        return result;
     }
 
     @Override
     public int queryCount() {
+
         return bookMapper.queryCount();
+
     }
 
     @Override
-    public int updateBook(Book book) {
-        return bookMapper.updateBook(book);
+    public Result updateBook(Book book) {
+
+        Result result = new Result();
+        result.setResult(bookMapper.updateBook(book));
+        return result;
     }
 
     @Override
-    public int deleteOne(Integer id) {
-        return bookMapper.deleteOne(id);
+    public Result deleteOne(Integer id) {
+        Result result = new Result();
+        result.setResult(bookMapper.deleteOne(id));
+        return result;
     }
 }

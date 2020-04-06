@@ -1,10 +1,10 @@
 package com.ngp.book.web.bookmanage.service;
 
 import com.ngp.book.web.bookmanage.config.PageInfo;
+import com.ngp.book.web.bookmanage.config.PageRequest;
 import com.ngp.book.web.bookmanage.entity.Book;
+import com.ngp.book.web.bookmanage.result.Result;
 
-
-import java.util.List;
 
 /**
  * @author gzd
@@ -12,14 +12,14 @@ import java.util.List;
  */
 public interface BookService {
 
-    List<Book> queryAllBook(PageInfo request);
+    PageInfo queryAllBook(PageRequest request);
 
-    int insertBook(Book book);
+    Result insertBook(Book book);
 
     int queryCount();
 
-    int updateBook(Book book);
+    Result updateBook(Book book);
 
-    int deleteOne(Integer id);
+    Result deleteOne(Integer id);
 
 }

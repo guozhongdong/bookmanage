@@ -1,20 +1,23 @@
 package com.ngp.book.web.bookmanage;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.ngp.book.web.bookmanage.config.PageInfo;
+import com.ngp.book.web.bookmanage.config.PageRequest;
+import com.ngp.book.web.bookmanage.result.Result;
 import com.ngp.book.web.bookmanage.service.BookService;
 import com.ngp.book.web.bookmanage.entity.Book;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Slf4j
 public class BookmanageApplicationTests {
 
 
@@ -42,18 +45,18 @@ public class BookmanageApplicationTests {
 
     @Test
     public void queryAll() {
-        PageInfo pageRequest = new PageInfo();
-        List<Book> list = bookService.queryAllBook(pageRequest);
-        System.out.println(list);
+        PageRequest pageRequest = new PageRequest();
+        PageInfo result = bookService.queryAllBook(pageRequest);
+        log.info("分页查询结果为："+ JSONObject.toJSON(result));
     }
 
     @Test
     public void query2All() {
-        PageInfo pageRequest = new PageInfo();
+        PageRequest pageRequest = new PageRequest();
         pageRequest.setPage(0);
         pageRequest.setSize(3);
-        List<Book> list = bookService.queryAllBook(pageRequest);
-        System.out.println(list);
+        PageInfo result = bookService.queryAllBook(pageRequest);
+        log.info("分页查询结果为："+ JSONObject.toJSON(result));
     }
 
     @Test
@@ -62,8 +65,8 @@ public class BookmanageApplicationTests {
         book.setAuthor("金庸");
         book.setName("鹿鼎记");
         book.setBookType("小说");
-        int num = bookService.insertBook(book);
-        System.out.println(num);
+        Result result = bookService.insertBook(book);
+        log.info("新增结果为："+ JSONObject.toJSON(result));
     }
 
     @Test
@@ -75,15 +78,15 @@ public class BookmanageApplicationTests {
         book.setPublish("机械工业出版社");
         book.setBookType("小说2");
         book.setPages(900);
-        int num = bookService.updateBook(book);
-        System.out.println(num);
+        Result result = bookService.updateBook(book);
+        log.info("修改结果为："+ JSONObject.toJSON(result));
     }
 
     @Test
     public void deleteBook() {
 
-        int num = bookService.deleteOne(1);
-        System.out.println(num);
+        Result result = bookService.deleteOne(1);
+        log.info("删除结果为："+ JSONObject.toJSON(result));
     }
 
 }
