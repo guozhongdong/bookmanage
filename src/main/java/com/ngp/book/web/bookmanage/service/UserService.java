@@ -1,6 +1,11 @@
 package com.ngp.book.web.bookmanage.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ngp.book.web.bookmanage.config.PageInfo;
+import com.ngp.book.web.bookmanage.config.PageRequest;
+import com.ngp.book.web.bookmanage.dto.user.UserDTO;
+import com.ngp.book.web.bookmanage.result.Result;
+
 
 /**
  * @author gzd
@@ -10,7 +15,7 @@ public interface UserService {
     /**
      * 用户列表
      */
-    JSONObject listUser(JSONObject jsonObject);
+    PageInfo listUser(PageRequest request);
 
     /**
      * 查询所有的角色
@@ -21,7 +26,7 @@ public interface UserService {
     /**
      * 添加用户
      */
-    JSONObject addUser(JSONObject jsonObject);
+    Result addUser(UserDTO userDTO) ;
 
     /**
      * 修改用户

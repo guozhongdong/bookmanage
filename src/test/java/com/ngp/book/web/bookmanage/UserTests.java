@@ -124,6 +124,8 @@ public class UserTests {
 
         List<JSONObject> result  = userMapper.listUser(jsonObject);
         log.info("新增结果结果为："+ JSONObject.toJSON(result));
+        int am = 1;
+        System.out.println(am);
     }
 
 

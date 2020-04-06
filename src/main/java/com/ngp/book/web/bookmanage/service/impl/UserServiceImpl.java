@@ -1,12 +1,16 @@
 package com.ngp.book.web.bookmanage.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ngp.book.web.bookmanage.config.PageInfo;
+import com.ngp.book.web.bookmanage.config.PageRequest;
+import com.ngp.book.web.bookmanage.dto.user.UserDTO;
 import com.ngp.book.web.bookmanage.repository.UserMapper;
+import com.ngp.book.web.bookmanage.result.Result;
 import com.ngp.book.web.bookmanage.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.print.attribute.standard.JobSheets;
+import java.util.List;
 
 /**
  * @author gzd
@@ -19,9 +23,14 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Override
-    public JSONObject listUser(JSONObject jsonObject) {
-
-        return null;
+    public PageInfo listUser(PageRequest request) {
+        PageInfo result = new PageInfo();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("offSet",request.getPage());
+        jsonObject.put("pageRow",request.getSize());
+        List<JSONObject> userList =  userMapper.listUser(jsonObject);
+        result.setPageObjectList(userList);
+        return result;
     }
 
     @Override
@@ -30,8 +39,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public JSONObject addUser(JSONObject jsonObject) {
-        return null;
+    public Result addUser(UserDTO userDTO) {
+        Result result = new Result();
+        result.setResult(userMapper.addUser(userDTO));
+        return result;
     }
 
     @Override
