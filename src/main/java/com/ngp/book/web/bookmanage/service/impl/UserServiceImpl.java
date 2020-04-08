@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ngp.book.web.bookmanage.config.PageInfo;
 import com.ngp.book.web.bookmanage.config.PageRequest;
 import com.ngp.book.web.bookmanage.dto.user.UserDTO;
+import com.ngp.book.web.bookmanage.dto.user.UserQueryDto;
 import com.ngp.book.web.bookmanage.repository.UserMapper;
 import com.ngp.book.web.bookmanage.result.Result;
 import com.ngp.book.web.bookmanage.service.UserService;
@@ -26,16 +27,23 @@ public class UserServiceImpl implements UserService {
     public PageInfo listUser(PageRequest request) {
         PageInfo result = new PageInfo();
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("offSet",request.getPage());
+        jsonObject.put("offSet",request.getOffset());
         jsonObject.put("pageRow",request.getSize());
         List<JSONObject> userList =  userMapper.listUser(jsonObject);
+        UserQueryDto userQueryDt = new UserQueryDto();
+
         result.setPageObjectList(userList);
+        result.setPageSize(request.getPageSize());
+        result.setPageNo(request.getPage());
+        result.setTotal(userMapper.countUser(userQueryDt));
         return result;
     }
 
     @Override
-    public JSONObject getAllRoles() {
-        return null;
+    public Result getAllRoles() {
+        Result result = new Result();
+        result.setResult(userMapper.getAllRoles());
+        return result;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.ngp.book.web.bookmanage.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.ngp.book.web.bookmanage.config.PageInfo;
 import com.ngp.book.web.bookmanage.config.PageRequest;
 import com.ngp.book.web.bookmanage.dto.user.UserDTO;
@@ -28,7 +27,7 @@ public class UserController {
 
         PageRequest request = new PageRequest();
         request.setSize(size);
-        request.setPage((page-1)*size);
+        request.setPage(page);
         return userService.listUser(request);
     }
 
@@ -37,6 +36,12 @@ public class UserController {
     public Result addUser(@RequestBody UserDTO userDTO) {
 
         return userService.addUser(userDTO);
+    }
+
+    @GetMapping("/getAllRoles")
+    public Result getAllRoles(){
+
+        return userService.getAllRoles();
     }
 
 }

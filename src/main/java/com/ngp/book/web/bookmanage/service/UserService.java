@@ -3,8 +3,11 @@ package com.ngp.book.web.bookmanage.service;
 import com.alibaba.fastjson.JSONObject;
 import com.ngp.book.web.bookmanage.config.PageInfo;
 import com.ngp.book.web.bookmanage.config.PageRequest;
+
 import com.ngp.book.web.bookmanage.dto.user.UserDTO;
 import com.ngp.book.web.bookmanage.result.Result;
+
+
 
 
 /**
@@ -21,7 +24,7 @@ public interface UserService {
      * 查询所有的角色
      * 在添加/修改用户的时候要使用此方法
      */
-    JSONObject getAllRoles();
+    Result getAllRoles();
 
     /**
      * 添加用户
