@@ -54,6 +54,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Result getUser(UserDTO userDTO) {
+        Result result = new Result();
+        result.setResult(userMapper.getUser(userDTO));
+        return result;
+    }
+
+    @Override
     public JSONObject updateUser(JSONObject jsonObject) {
         return null;
     }

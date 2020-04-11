@@ -17,6 +17,14 @@
             (#{username}, #{password}, #{nickname}, #{roleId},now(),now(),'1')
     </insert>
 
+    <select id="getUser"  resultType="com.ngp.book.web.bookmanage.dto.user.UserDO">
+       select username,password sys_user from sys_user
+        WHERE username = #{username}
+        AND password = #{password}
+        AND delete_status = '1'
+    </select>
+
+
     <update id="updateUser">
         UPDATE sys_user
         SET

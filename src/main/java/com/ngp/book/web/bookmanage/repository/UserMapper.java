@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ngp.book.web.bookmanage.dto.permission.PermissionDO;
 import com.ngp.book.web.bookmanage.dto.role.RoleDO;
 import com.ngp.book.web.bookmanage.dto.role.RoleDTO;
+import com.ngp.book.web.bookmanage.dto.user.UserDO;
 import com.ngp.book.web.bookmanage.dto.user.UserDTO;
 import com.ngp.book.web.bookmanage.dto.user.UserQueryDto;
 import org.apache.ibatis.annotations.Param;
@@ -25,6 +26,11 @@ public interface UserMapper {
      * 新增用户
      */
     int addUser(UserDTO userDTO);
+
+    /**
+     * 查询用户
+     */
+    UserDO getUser(UserDTO userDTO);
 
     /**
      * 修改用户

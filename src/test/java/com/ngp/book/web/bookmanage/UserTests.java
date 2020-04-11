@@ -10,6 +10,9 @@ import com.ngp.book.web.bookmanage.dto.user.UserDTO;
 import com.ngp.book.web.bookmanage.dto.user.UserQueryDto;
 
 import com.ngp.book.web.bookmanage.repository.UserMapper;
+import com.ngp.book.web.bookmanage.result.Result;
+import com.ngp.book.web.bookmanage.service.LoginService;
+import com.ngp.book.web.bookmanage.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 
@@ -28,6 +32,9 @@ public class UserTests {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private LoginService loginService;
 
     @Test
     public void count() {
@@ -128,6 +135,22 @@ public class UserTests {
         System.out.println(am);
     }
 
+
+    @Test
+    public void userLogin() {
+
+        UserVo userVo = new UserVo();
+        userVo.setUsername("user");
+        Result result = new Result();
+        try {
+            result = loginService.authLogin(userVo);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        log.info("登录结果结果为："+ JSONObject.toJSON(result));
+    }
 
 
 

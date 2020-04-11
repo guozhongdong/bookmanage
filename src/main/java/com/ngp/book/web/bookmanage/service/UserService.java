@@ -31,6 +31,12 @@ public interface UserService {
      */
     Result addUser(UserDTO userDTO) ;
 
+
+    /**
+     * 查询用户
+     */
+    Result getUser(UserDTO userDTO) ;
+
     /**
      * 修改用户
      */
