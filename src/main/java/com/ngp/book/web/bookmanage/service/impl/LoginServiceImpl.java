@@ -9,6 +9,7 @@ import com.ngp.book.web.bookmanage.service.UserService;
 import com.ngp.book.web.bookmanage.vo.UserVo;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,33 +29,21 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Result authLogin(UserVo userVo) throws InvocationTargetException, IllegalAccessException {
-        Result result = null;
+        Result result = new Result();
 
-        // 权限验证部分，暂且不处理
-        /*Subject currentUser = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+        // 权限验证部分，保存用户token，到权限认证处进行认证
+        Subject currentUser = SecurityUtils.getSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(userVo.getUsername(), userVo.getPassword());
         try {
             currentUser.login(token);
-            info.put("result", "success");
-        } catch (AuthenticationException e) {
-            info.put("result", "fail");
-        }*/
-        UserDTO userDTO = new UserDTO();
-        BeanUtils.copyProperties(userDTO,userVo);
-        result = userService.getUser(userDTO);
-        if (result.isSuccess() && result.getResult() != null){
             result.setMessage("登录成功！");
-            return result;
-        }else{
+        } catch (AuthenticationException e) {
             result.setMessage("登录失败，重新登录！");
-            result.setSuccess(false);
         }
         return result;
-    }
-
-    @Override
-    public JSONObject getUser(String username, String password) {
-        return null;
+        //UserDTO userDTO = new UserDTO();
+        //BeanUtils.copyProperties(userDTO,userVo);
+        //result = userService.getUser(userDTO);
     }
 
     @Override

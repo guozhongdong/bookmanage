@@ -17,13 +17,7 @@ public interface LoginService {
      */
     Result authLogin(UserVo userVo) throws InvocationTargetException, IllegalAccessException;
 
-    /**
-     * 根据用户名和密码查询对应的用户
-     *
-     * @param username 用户名
-     * @param password 密码
-     */
-    JSONObject getUser(String username, String password);
+
 
     /**
      * 查询当前登录用户的权限等信息

@@ -6,6 +6,7 @@ import com.ngp.book.web.bookmanage.config.PageRequest;
 import com.ngp.book.web.bookmanage.entity.Book;
 import com.ngp.book.web.bookmanage.result.Result;
 import com.ngp.book.web.bookmanage.service.BookService;
+import com.ngp.book.web.bookmanage.vo.BookVo;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -20,13 +21,13 @@ public class BookController {
     private BookService bookService;
 
 
-    @GetMapping("/findAll/{page}/{size}")
-    public PageInfo findAll(@PathVariable("page") Integer page, @PathVariable("size") Integer size){
+    @GetMapping("/findAll")
+    public PageInfo findAll(BookVo bookVo){
 
 
         PageRequest request = new PageRequest();
-        request.setSize(size);
-        request.setPage((page-1)*size);
+        request.setSize(bookVo.getPageSize());
+        request.setPage((bookVo.getPageNum()-1)*bookVo.getPageSize());
         return bookService.queryAllBook(request);
     }
 
