@@ -1,70 +1,56 @@
 package com.ngp.book.web.bookmanage.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ngp.book.web.bookmanage.config.PageInfo;
-import com.ngp.book.web.bookmanage.config.PageRequest;
-
-import com.ngp.book.web.bookmanage.dto.user.UserDTO;
-import com.ngp.book.web.bookmanage.result.Result;
-
-
-
 
 /**
- * @author gzd
- * @date 2020/4/5 下午10:11
+ * @author: hxy
+ * @description: 用户/角色/权限
+ * @date: 2017/11/2 10:18
  */
 public interface UserService {
-    /**
-     * 用户列表
-     */
-    PageInfo listUser(PageRequest request);
+	/**
+	 * 用户列表
+	 */
+	JSONObject listUser(JSONObject jsonObject);
 
-    /**
-     * 查询所有的角色
-     * 在添加/修改用户的时候要使用此方法
-     */
-    Result getAllRoles();
+	/**
+	 * 查询所有的角色
+	 * 在添加/修改用户的时候要使用此方法
+	 */
+	JSONObject getAllRoles();
 
-    /**
-     * 添加用户
-     */
-    Result addUser(UserDTO userDTO) ;
+	/**
+	 * 添加用户
+	 */
+	JSONObject addUser(JSONObject jsonObject);
 
+	/**
+	 * 修改用户
+	 */
+	JSONObject updateUser(JSONObject jsonObject);
 
-    /**
-     * 查询用户
-     */
-    Result getUser(UserDTO userDTO) ;
+	/**
+	 * 角色列表
+	 */
+	JSONObject listRole();
 
-    /**
-     * 修改用户
-     */
-    JSONObject updateUser(JSONObject jsonObject);
+	/**
+	 * 查询所有权限, 给角色分配权限时调用
+	 */
+	JSONObject listAllPermission();
 
-    /**
-     * 角色列表
-     */
-    JSONObject listRole();
+	/**
+	 * 添加角色
+	 */
+	JSONObject addRole(JSONObject jsonObject);
 
-    /**
-     * 查询所有权限, 给角色分配权限时调用
-     */
-    JSONObject listAllPermission();
+	/**
+	 * 修改角色
+	 */
+	JSONObject updateRole(JSONObject jsonObject);
 
-    /**
-     * 添加角色
-     */
-    JSONObject addRole(JSONObject jsonObject);
-
-    /**
-     * 修改角色
-     */
-    JSONObject updateRole(JSONObject jsonObject);
-
-    /**
-     * 删除角色
-     */
-    JSONObject deleteRole(JSONObject jsonObject);
-
+	/**
+	 * 删除角色
+	 */
+	JSONObject deleteRole(JSONObject jsonObject);
 }

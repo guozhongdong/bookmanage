@@ -1,98 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.ngp.book.web.bookmanage.repository.UserMapper">
+<mapper namespace="com.ngp.book.web.bookmanage.dao.UserDao">
 
     <select id="countUser" resultType="Integer">
         SELECT count(0)
         FROM sys_user u
         WHERE u.delete_status = '1'
     </select>
-    <sql id="userField">
-        username, password, nickname, role_id,create_time,update_time,delete_status
-    </sql>
-    <insert id="addUser"  keyProperty="userId">
-        INSERT INTO sys_user
-        (<include refid="userField"/> ) VALUES
-            (#{username}, #{password}, #{nickname}, #{roleId},now(),now(),'1')
-    </insert>
 
-    <select id="getUser"  resultType="com.ngp.book.web.bookmanage.dto.user.UserDO">
-       select username,password sys_user from sys_user
-        WHERE username = #{username}
-        AND password = #{password}
-        AND delete_status = '1'
-    </select>
-
-
-    <update id="updateUser">
-        UPDATE sys_user
-        SET
-        nickname = #{nickname}
-        <if test="password !='' and password !=null">
-            , password = #{password}
-        </if>
-
-        , role_id = #{roleId}
-        , delete_status = #{deleteStatus}
-        WHERE id = #{id}
-    </update>
-
-
-    <select id="getAllRoles" resultType="com.ngp.book.web.bookmanage.dto.role.RoleDO">
-        SELECT
-            id,
-            role_name
-        FROM sys_role
-        WHERE delete_status='1'
-    </select>
-
-
-    <select id="listAllPermission" resultType="com.ngp.book.web.bookmanage.dto.permission.PermissionDO">
-        SELECT
-            p.id    ,
-            p.menu_name   ,
-            p.permission_name  ,
-            p.required_permission
-        FROM sys_permission p
-    </select>
-
-
-    <insert id="insertRole"  >
-        INSERT INTO sys_role
-        (role_name,create_time,update_time,delete_status)
-        VALUES (#{roleName},now(),now(),'1')
-    </insert>
-
-    <update id="updateRoleName">
-        UPDATE sys_role
-        SET
-            role_name = #{roleName}
-        WHERE id = #{id}
-    </update>
-
-    <update id="removeRole">
-        UPDATE sys_role
-        SET
-            delete_status = '2'
-        WHERE id = #{id}
-    </update>
-    <update id="removeRoleAllPermission">
-        UPDATE sys_role_permission
-        SET
-            delete_status = '2'
-        WHERE role_id = #{id}
-    </update>
-
-
-    <select id="queryExistUsername" resultType="int">
-        select count(0)
-         from sys_user
-         WHERE username=#{username}
-         AND delete_status='1';
-    </select>
-
-    <resultMap id="userMap" type="com.ngp.book.web.bookmanage.dto.permission.One2Many">
+    <resultMap id="userMap" type="com.ngp.book.web.bookmanage.utils.model.One2Many">
         <id column="userId" property="userId"/>
         <result column="username" property="username"/>
         <result column="nickname" property="nickname"/>
@@ -106,7 +23,6 @@
             <id column="permissionName" property="permissionName"/>
         </collection>
     </resultMap>
-
     <select id="listUser" resultMap="userMap">
         SELECT
             u.*,
@@ -133,16 +49,40 @@
         ORDER BY u.userId
     </select>
 
+    <select id="getAllRoles" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            id        roleId,
+            role_name roleName
+        FROM sys_role
+        WHERE delete_status='1'
+    </select>
 
+    <insert id="addUser" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO sys_user
+        (username, password, nickname, role_id) VALUES
+            (#{username}, #{password}, #{nickname}, #{roleId})
+    </insert>
 
-    <resultMap id="roleMap" type="com.ngp.book.web.bookmanage.dto.permission.One2Many">
+    <update id="updateUser">
+        UPDATE sys_user
+        SET
+        nickname = #{nickname}
+        <if test="password !='' and password !=null">
+            , password = #{password}
+        </if>
+
+        , role_id = #{roleId}
+        , delete_status = #{deleteStatus}
+        WHERE id = #{userId} and id != 10001
+    </update>
+    <resultMap id="roleMap" type="com.ngp.book.web.bookmanage.utils.model.One2Many">
         <id column="roleId" property="roleId"/>
         <result column="roleName" property="roleName"/>
         <collection property="users" ofType="com.alibaba.fastjson.JSONObject">
             <id column="userId" property="userId"/>
             <result column="nickname" property="nickname"/>
         </collection>
-        <collection property="menus" ofType="com.ngp.book.web.bookmanage.dto.permission.One2Many">
+        <collection property="menus" ofType="com.ngp.book.web.bookmanage.utils.model.One2Many">
             <id column="menuCode" property="menuCode"/>
             <result column="menuName" property="menuName"/>
             <collection property="permissions" ofType="com.alibaba.fastjson.JSONObject">
@@ -168,10 +108,7 @@
         WHERE r.delete_status = '1'
         ORDER BY r.id, p.id
     </select>
-
-
-
-    <resultMap id="permissionMap" type="com.ngp.book.web.bookmanage.dto.permission.One2Many">
+    <resultMap id="permissionMap" type="com.ngp.book.web.bookmanage.utils.model.One2Many">
         <id column="menuName" property="menuName"/>
         <collection property="permissions" ofType="com.alibaba.fastjson.JSONObject">
             <id column="id" property="id"/>
@@ -179,9 +116,20 @@
             <result column="requiredPerm" property="requiredPerm" javaType="Integer"/>
         </collection>
     </resultMap>
+    <select id="listAllPermission" resultMap="permissionMap">
+        SELECT
+            p.id                  id,
+            p.menu_name           menuName,
+            p.permission_name     permissionName,
+            p.required_permission requiredPerm
+        FROM sys_permission p;
+    </select>
 
-
-<!-- -->
+    <insert id="insertRole" useGeneratedKeys="true" keyProperty="roleId">
+        INSERT INTO sys_role
+        (role_name)
+        VALUES (#{roleName})
+    </insert>
 
     <insert id="insertRolePermission">
         insert into sys_role_permission (role_id, permission_id)
@@ -191,7 +139,7 @@
         </foreach>
     </insert>
 
-    <resultMap id="aRole" type="com.ngp.book.web.bookmanage.dto.permission.One2Many">
+    <resultMap id="aRole" type="com.ngp.book.web.bookmanage.utils.model.One2Many">
         <id column="roleId" property="roleId"/>
         <result column="roleName" property="roleName"/>
         <collection property="users" ofType="com.alibaba.fastjson.JSONObject">
@@ -214,7 +162,18 @@
         WHERE r.id = #{roleId}
     </select>
 
-
+    <update id="removeRole">
+        UPDATE sys_role
+        SET
+            delete_status = '2'
+        WHERE id = #{roleId} and id !=1
+    </update>
+    <update id="removeRoleAllPermission">
+        UPDATE sys_role_permission
+        SET
+            delete_status = '2'
+        WHERE role_id = #{roleId}
+    </update>
 
     <update id="removeOldPermission">
         UPDATE sys_role_permission
@@ -227,16 +186,16 @@
         </foreach>
         )
     </update>
-    <!--
-
-
-
-
-
-
-
-
-
-
-    -->
+    <update id="updateRoleName">
+        UPDATE sys_role
+        SET
+            role_name = #{roleName}
+        WHERE id = #{roleId}
+    </update>
+    <select id="queryExistUsername" resultType="int">
+        select count(0)
+         from sys_user
+         WHERE username=#{username}
+         AND delete_status='1';
+    </select>
 </mapper>

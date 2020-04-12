@@ -1,69 +1,48 @@
 package com.ngp.book.web.bookmanage.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ngp.book.web.bookmanage.dto.user.UserDTO;
-import com.ngp.book.web.bookmanage.result.Result;
 import com.ngp.book.web.bookmanage.service.LoginService;
-import com.ngp.book.web.bookmanage.vo.UserVo;
+import com.ngp.book.web.bookmanage.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
- * @author gzd
- * @date 2020/4/11 下午3:43
- * 登录控制器
+ * @author: hxy
+ * @description: 登录相关Controller
+ * @date: 2017/10/24 10:33
  */
 @RestController
 @RequestMapping("/login")
 public class LoginController {
 
+	@Autowired
+	private LoginService loginService;
 
-    @Autowired
-    private LoginService loginService;
+	/**
+	 * 登录
+	 */
+	@PostMapping("/auth")
+	public JSONObject authLogin(@RequestBody JSONObject requestJson) {
+		CommonUtil.hasAllRequired(requestJson, "username,password");
+		return loginService.authLogin(requestJson);
+	}
 
-    /**
-     * 登录
-     */
-    @PostMapping("/auth")
-    public Result authLogin(@RequestBody UserVo userVo) {
-        Result result = new Result();
+	/**
+	 * 查询当前登录用户的信息
+	 */
+	@PostMapping("/getInfo")
+	public JSONObject getInfo() {
+		return loginService.getInfo();
+	}
 
-        if (userVo.getUsername() == null){
-            result.setMessage("请输入用户名！");
-            return result;
-        }
-        if (userVo.getPassword() == null){
-            result.setMessage("请输入密码！");
-            return result;
-        }
-        try {
-            return loginService.authLogin(userVo);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    /**
-     * 查询当前登录用户的信息
-     */
-    @PostMapping("/getInfo")
-    public JSONObject getInfo() {
-        return loginService.getInfo();
-    }
-
-    /**
-     * 登出
-     */
-    @PostMapping("/logout")
-    public JSONObject logout() {
-        return loginService.logout();
-    }
+	/**
+	 * 登出
+	 */
+	@PostMapping("/logout")
+	public JSONObject logout() {
+		return loginService.logout();
+	}
 }

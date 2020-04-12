@@ -1,92 +1,176 @@
 package com.ngp.book.web.bookmanage.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ngp.book.web.bookmanage.config.PageInfo;
-import com.ngp.book.web.bookmanage.config.PageRequest;
-import com.ngp.book.web.bookmanage.dto.user.UserDTO;
-import com.ngp.book.web.bookmanage.dto.user.UserQueryDto;
-import com.ngp.book.web.bookmanage.repository.UserMapper;
-import com.ngp.book.web.bookmanage.result.Result;
+import com.ngp.book.web.bookmanage.dao.UserDao;
 import com.ngp.book.web.bookmanage.service.UserService;
+import com.ngp.book.web.bookmanage.utils.CommonUtil;
+import com.ngp.book.web.bookmanage.utils.constants.ErrorEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
- * @author gzd
- * @date 2020/4/5 下午10:11
+ * @author: hxy
+ * @description: 用户/角色/权限
+ * @date: 2017/11/2 10:18
  */
 @Service
 public class UserServiceImpl implements UserService {
+	@Autowired
+	private UserDao userDao;
 
-    @Autowired
-    private UserMapper userMapper;
+	/**
+	 * 用户列表
+	 */
+	@Override
+	public JSONObject listUser(JSONObject jsonObject) {
+		CommonUtil.fillPageParam(jsonObject);
+		int count = userDao.countUser(jsonObject);
+		List<JSONObject> list = userDao.listUser(jsonObject);
+		return CommonUtil.successPage(jsonObject, list, count);
+	}
 
-    @Override
-    public PageInfo listUser(PageRequest request) {
-        PageInfo result = new PageInfo();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("offSet",request.getOffset());
-        jsonObject.put("pageRow",request.getSize());
-        List<JSONObject> userList =  userMapper.listUser(jsonObject);
-        UserQueryDto userQueryDt = new UserQueryDto();
+	/**
+	 * 添加用户
+	 */
+	@Override
+	public JSONObject addUser(JSONObject jsonObject) {
+		int exist = userDao.queryExistUsername(jsonObject);
+		if (exist > 0) {
+			return CommonUtil.errorJson(ErrorEnum.E_10009);
+		}
+		userDao.addUser(jsonObject);
+		return CommonUtil.successJson();
+	}
 
-        result.setPageObjectList(userList);
-        result.setPageSize(request.getPageSize());
-        result.setPageNo(request.getPage());
-        result.setTotal(userMapper.countUser(userQueryDt));
-        return result;
-    }
+	/**
+	 * 查询所有的角色
+	 * 在添加/修改用户的时候要使用此方法
+	 */
+	@Override
+	public JSONObject getAllRoles() {
+		List<JSONObject> roles = userDao.getAllRoles();
+		return CommonUtil.successPage(roles);
+	}
 
-    @Override
-    public Result getAllRoles() {
-        Result result = new Result();
-        result.setResult(userMapper.getAllRoles());
-        return result;
-    }
+	/**
+	 * 修改用户
+	 */
+	@Override
+	public JSONObject updateUser(JSONObject jsonObject) {
+		userDao.updateUser(jsonObject);
+		return CommonUtil.successJson();
+	}
 
-    @Override
-    public Result addUser(UserDTO userDTO) {
-        Result result = new Result();
-        result.setResult(userMapper.addUser(userDTO));
-        return result;
-    }
+	/**
+	 * 角色列表
+	 */
+	@Override
+	public JSONObject listRole() {
+		List<JSONObject> roles = userDao.listRole();
+		return CommonUtil.successPage(roles);
+	}
 
-    @Override
-    public Result getUser(UserDTO userDTO) {
-        Result result = new Result();
-        result.setResult(userMapper.getUser(userDTO));
-        return result;
-    }
+	/**
+	 * 查询所有权限, 给角色分配权限时调用
+	 */
+	@Override
+	public JSONObject listAllPermission() {
+		List<JSONObject> permissions = userDao.listAllPermission();
+		return CommonUtil.successPage(permissions);
+	}
 
-    @Override
-    public JSONObject updateUser(JSONObject jsonObject) {
-        return null;
-    }
+	/**
+	 * 添加角色
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject addRole(JSONObject jsonObject) {
+		userDao.insertRole(jsonObject);
+		userDao.insertRolePermission(jsonObject.getString("roleId"), (List<Integer>) jsonObject.get("permissions"));
+		return CommonUtil.successJson();
+	}
 
-    @Override
-    public JSONObject listRole() {
-        return null;
-    }
+	/**
+	 * 修改角色
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject updateRole(JSONObject jsonObject) {
+		String roleId = jsonObject.getString("roleId");
+		List<Integer> newPerms = (List<Integer>) jsonObject.get("permissions");
+		JSONObject roleInfo = userDao.getRoleAllInfo(jsonObject);
+		Set<Integer> oldPerms = (Set<Integer>) roleInfo.get("permissionIds");
+		//修改角色名称
+		dealRoleName(jsonObject, roleInfo);
+		//添加新权限
+		saveNewPermission(roleId, newPerms, oldPerms);
+		//移除旧的不再拥有的权限
+		removeOldPermission(roleId, newPerms, oldPerms);
+		return CommonUtil.successJson();
+	}
 
-    @Override
-    public JSONObject listAllPermission() {
-        return null;
-    }
+	/**
+	 * 修改角色名称
+	 */
+	private void dealRoleName(JSONObject paramJson, JSONObject roleInfo) {
+		String roleName = paramJson.getString("roleName");
+		if (!roleName.equals(roleInfo.getString("roleName"))) {
+			userDao.updateRoleName(paramJson);
+		}
+	}
 
-    @Override
-    public JSONObject addRole(JSONObject jsonObject) {
-        return null;
-    }
+	/**
+	 * 为角色添加新权限
+	 */
+	private void saveNewPermission(String roleId, Collection<Integer> newPerms, Collection<Integer> oldPerms) {
+		List<Integer> waitInsert = new ArrayList<>();
+		for (Integer newPerm : newPerms) {
+			if (!oldPerms.contains(newPerm)) {
+				waitInsert.add(newPerm);
+			}
+		}
+		if (waitInsert.size() > 0) {
+			userDao.insertRolePermission(roleId, waitInsert);
+		}
+	}
 
-    @Override
-    public JSONObject updateRole(JSONObject jsonObject) {
-        return null;
-    }
+	/**
+	 * 删除角色 旧的 不再拥有的权限
+	 */
+	private void removeOldPermission(String roleId, Collection<Integer> newPerms, Collection<Integer> oldPerms) {
+		List<Integer> waitRemove = new ArrayList<>();
+		for (Integer oldPerm : oldPerms) {
+			if (!newPerms.contains(oldPerm)) {
+				waitRemove.add(oldPerm);
+			}
+		}
+		if (waitRemove.size() > 0) {
+			userDao.removeOldPermission(roleId, waitRemove);
+		}
+	}
 
-    @Override
-    public JSONObject deleteRole(JSONObject jsonObject) {
-        return null;
-    }
+	/**
+	 * 删除角色
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject deleteRole(JSONObject jsonObject) {
+		JSONObject roleInfo = userDao.getRoleAllInfo(jsonObject);
+		List<JSONObject> users = (List<JSONObject>) roleInfo.get("users");
+		if (users != null && users.size() > 0) {
+			return CommonUtil.errorJson(ErrorEnum.E_10008);
+		}
+		userDao.removeRole(jsonObject);
+		userDao.removeRoleAllPermission(jsonObject);
+		return CommonUtil.successJson();
+	}
 }

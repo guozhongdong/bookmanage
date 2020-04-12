@@ -1,11 +1,14 @@
 package com.ngp.book.web.bookmanage.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ngp.book.web.bookmanage.config.PageInfo;
 import com.ngp.book.web.bookmanage.config.PageRequest;
 import com.ngp.book.web.bookmanage.result.Result;
+import com.ngp.book.web.bookmanage.result.ResultVO;
 import com.ngp.book.web.bookmanage.service.BookService;
 import com.ngp.book.web.bookmanage.entity.Book;
 import com.ngp.book.web.bookmanage.repository.BookMapper;
+import com.ngp.book.web.bookmanage.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,10 +26,17 @@ public class BookServiceImpl implements BookService {
     private BookMapper bookMapper;
 
     @Override
-    public PageInfo queryAllBook(PageRequest request) {
+    public ResultVO queryAllBook(PageRequest request) {
+        ResultVO resultVO = ResultVO.successRes();
         List<Book> list = bookMapper.queryAllBook(request);
         int count = bookMapper.queryCount();
-        return new PageInfo(true,null,request.getPage(),request.getSize(),list,count);
+
+        ResultVO.ResultData resultData = new ResultVO.ResultData();
+        resultData.setDatalist(list);
+        resultData.setPageSize(request.getSize());
+        resultData.setTotalCount(count);
+        resultVO.setInfo(resultData);
+        return resultVO;
     }
 
     @Override

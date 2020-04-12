@@ -1,47 +1,100 @@
 package com.ngp.book.web.bookmanage.controller;
 
-import com.ngp.book.web.bookmanage.config.PageInfo;
-import com.ngp.book.web.bookmanage.config.PageRequest;
-import com.ngp.book.web.bookmanage.dto.user.UserDTO;
-import com.ngp.book.web.bookmanage.result.Result;
+import com.alibaba.fastjson.JSONObject;
 import com.ngp.book.web.bookmanage.service.UserService;
+import com.ngp.book.web.bookmanage.utils.CommonUtil;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * @author gzd
- * @date 2020/4/6 下午7:25
- */
+import javax.servlet.http.HttpServletRequest;
 
+/**
+ * @author: hxy
+ * @description: 用户/角色/权限相关controller
+ * @date: 2017/11/2 10:19
+ */
 @RestController
 @RequestMapping("/user")
 public class UserController {
+	@Autowired
+	private UserService userService;
 
+	/**
+	 * 查询用户列表
+	 */
+	@RequiresPermissions("user:list")
+	@GetMapping("/list")
+	public JSONObject listUser(HttpServletRequest request) {
+		return userService.listUser(CommonUtil.request2Json(request));
+	}
 
-    @Autowired
-    private UserService userService;
+	@RequiresPermissions("user:add")
+	@PostMapping("/addUser")
+	public JSONObject addUser(@RequestBody JSONObject requestJson) {
+		CommonUtil.hasAllRequired(requestJson, "username, password, nickname,   roleId");
+		return userService.addUser(requestJson);
+	}
 
+	@RequiresPermissions("user:update")
+	@PostMapping("/updateUser")
+	public JSONObject updateUser(@RequestBody JSONObject requestJson) {
+		CommonUtil.hasAllRequired(requestJson, " nickname,   roleId, deleteStatus, userId");
+		return userService.updateUser(requestJson);
+	}
 
-    @GetMapping("/findAll/{page}/{size}")
-    public PageInfo findAllUser(@PathVariable("page") Integer page, @PathVariable("size") Integer size){
+	@RequiresPermissions(value = {"user:add", "user:update"}, logical = Logical.OR)
+	@GetMapping("/getAllRoles")
+	public JSONObject getAllRoles() {
+		return userService.getAllRoles();
+	}
 
-        PageRequest request = new PageRequest();
-        request.setSize(size);
-        request.setPage(page);
-        return userService.listUser(request);
-    }
+	/**
+	 * 角色列表
+	 */
+	@RequiresPermissions("role:list")
+	@GetMapping("/listRole")
+	public JSONObject listRole() {
+		return userService.listRole();
+	}
 
+	/**
+	 * 查询所有权限, 给角色分配权限时调用
+	 */
+	@RequiresPermissions("role:list")
+	@GetMapping("/listAllPermission")
+	public JSONObject listAllPermission() {
+		return userService.listAllPermission();
+	}
 
-    @PostMapping("/addUser")
-    public Result addUser(@RequestBody UserDTO userDTO) {
+	/**
+	 * 新增角色
+	 */
+	@RequiresPermissions("role:add")
+	@PostMapping("/addRole")
+	public JSONObject addRole(@RequestBody JSONObject requestJson) {
+		CommonUtil.hasAllRequired(requestJson, "roleName,permissions");
+		return userService.addRole(requestJson);
+	}
 
-        return userService.addUser(userDTO);
-    }
+	/**
+	 * 修改角色
+	 */
+	@RequiresPermissions("role:update")
+	@PostMapping("/updateRole")
+	public JSONObject updateRole(@RequestBody JSONObject requestJson) {
+		CommonUtil.hasAllRequired(requestJson, "roleId,roleName,permissions");
+		return userService.updateRole(requestJson);
+	}
 
-    @GetMapping("/getAllRoles")
-    public Result getAllRoles(){
-
-        return userService.getAllRoles();
-    }
-
+	/**
+	 * 删除角色
+	 */
+	@RequiresPermissions("role:delete")
+	@PostMapping("/deleteRole")
+	public JSONObject deleteRole(@RequestBody JSONObject requestJson) {
+		CommonUtil.hasAllRequired(requestJson, "roleId");
+		return userService.deleteRole(requestJson);
+	}
 }

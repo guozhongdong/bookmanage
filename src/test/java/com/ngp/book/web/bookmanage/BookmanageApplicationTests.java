@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ngp.book.web.bookmanage.config.PageInfo;
 import com.ngp.book.web.bookmanage.config.PageRequest;
 import com.ngp.book.web.bookmanage.result.Result;
+import com.ngp.book.web.bookmanage.result.ResultVO;
 import com.ngp.book.web.bookmanage.service.BookService;
 import com.ngp.book.web.bookmanage.entity.Book;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class BookmanageApplicationTests {
     @Test
     public void queryAll() {
         PageRequest pageRequest = new PageRequest();
-        PageInfo result = bookService.queryAllBook(pageRequest);
+        ResultVO result = bookService.queryAllBook(pageRequest);
         log.info("分页查询结果为："+ JSONObject.toJSON(result));
     }
 
@@ -55,7 +56,7 @@ public class BookmanageApplicationTests {
         PageRequest pageRequest = new PageRequest();
         pageRequest.setPage(0);
         pageRequest.setSize(3);
-        PageInfo result = bookService.queryAllBook(pageRequest);
+        ResultVO result = bookService.queryAllBook(pageRequest);
         log.info("分页查询结果为："+ JSONObject.toJSON(result));
     }
 

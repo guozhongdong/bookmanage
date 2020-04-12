@@ -1,10 +1,11 @@
 package com.ngp.book.web.bookmanage.controller;
 
 
-import com.ngp.book.web.bookmanage.config.PageInfo;
+
 import com.ngp.book.web.bookmanage.config.PageRequest;
 import com.ngp.book.web.bookmanage.entity.Book;
 import com.ngp.book.web.bookmanage.result.Result;
+import com.ngp.book.web.bookmanage.result.ResultVO;
 import com.ngp.book.web.bookmanage.service.BookService;
 import com.ngp.book.web.bookmanage.vo.BookVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class BookController {
 
 
     @GetMapping("/findAll")
-    public PageInfo findAll(BookVo bookVo){
+    public ResultVO findAll(BookVo bookVo){
 
 
         PageRequest request = new PageRequest();

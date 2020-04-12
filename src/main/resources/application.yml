@@ -10,7 +10,7 @@ spring:
       hibernate:
         format_sql: true
 server:
-  port: 8182
+  port: 8080
 
 # Mybatis mapper 映射路径配置
 mybatis:

@@ -4,6 +4,7 @@ import com.ngp.book.web.bookmanage.config.PageInfo;
 import com.ngp.book.web.bookmanage.config.PageRequest;
 import com.ngp.book.web.bookmanage.entity.Book;
 import com.ngp.book.web.bookmanage.result.Result;
+import com.ngp.book.web.bookmanage.result.ResultVO;
 
 
 /**
@@ -12,7 +13,7 @@ import com.ngp.book.web.bookmanage.result.Result;
  */
 public interface BookService {
 
-    PageInfo queryAllBook(PageRequest request);
+    ResultVO queryAllBook(PageRequest request);
 
     Result insertBook(Book book);
 

@@ -5,7 +5,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.ngp.book.web.bookmanage.repository")
 public class BookmanageApplication {
 
     public static void main(String[] args) {

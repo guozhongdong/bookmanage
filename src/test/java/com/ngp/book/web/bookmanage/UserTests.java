@@ -139,17 +139,7 @@ public class UserTests {
     @Test
     public void userLogin() {
 
-        UserVo userVo = new UserVo();
-        userVo.setUsername("user");
-        Result result = new Result();
-        try {
-            result = loginService.authLogin(userVo);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        log.info("登录结果结果为："+ JSONObject.toJSON(result));
+
     }
 
 

@@ -7,7 +7,9 @@ import com.ngp.book.web.bookmanage.dto.role.RoleDTO;
 import com.ngp.book.web.bookmanage.dto.user.UserDO;
 import com.ngp.book.web.bookmanage.dto.user.UserDTO;
 import com.ngp.book.web.bookmanage.dto.user.UserQueryDto;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -15,6 +17,8 @@ import java.util.List;
  * @author gzd
  * @date 2020/4/5 下午10:07
  */
+@Mapper
+@Repository
 public interface UserMapper {
 
     /**

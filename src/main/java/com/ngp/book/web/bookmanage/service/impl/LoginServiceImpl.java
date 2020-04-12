@@ -1,58 +1,85 @@
 package com.ngp.book.web.bookmanage.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ngp.book.web.bookmanage.dto.user.UserDO;
-import com.ngp.book.web.bookmanage.dto.user.UserDTO;
-import com.ngp.book.web.bookmanage.result.Result;
+import com.ngp.book.web.bookmanage.dao.LoginDao;
 import com.ngp.book.web.bookmanage.service.LoginService;
-import com.ngp.book.web.bookmanage.service.UserService;
-import com.ngp.book.web.bookmanage.vo.UserVo;
-import org.apache.commons.beanutils.BeanUtils;
+import com.ngp.book.web.bookmanage.service.PermissionService;
+import com.ngp.book.web.bookmanage.utils.CommonUtil;
+import com.ngp.book.web.bookmanage.utils.constants.Constants;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
- * @author gzd
- * @date 2020/4/11 下午3:46
+ * @author: hxy
+ * @description: 登录service实现类
+ * @date: 2017/10/24 11:53
  */
 @Service
 public class LoginServiceImpl implements LoginService {
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private LoginDao loginDao;
+	@Autowired
+	private PermissionService permissionService;
 
-    @Override
-    public Result authLogin(UserVo userVo) throws InvocationTargetException, IllegalAccessException {
-        Result result = new Result();
+	/**
+	 * 登录表单提交
+	 */
+	@Override
+	public JSONObject authLogin(JSONObject jsonObject) {
+		String username = jsonObject.getString("username");
+		String password = jsonObject.getString("password");
+		JSONObject info = new JSONObject();
+		Subject currentUser = SecurityUtils.getSubject();
+		UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+		try {
+			currentUser.login(token);
+			info.put("result", "success");
+		} catch (AuthenticationException e) {
+			info.put("result", "success");
+		}
+		return CommonUtil.successJson(info);
+	}
 
-        // 权限验证部分，保存用户token，到权限认证处进行认证
-        Subject currentUser = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(userVo.getUsername(), userVo.getPassword());
-        try {
-            currentUser.login(token);
-            result.setMessage("登录成功！");
-        } catch (AuthenticationException e) {
-            result.setMessage("登录失败，重新登录！");
-        }
-        return result;
-        //UserDTO userDTO = new UserDTO();
-        //BeanUtils.copyProperties(userDTO,userVo);
-        //result = userService.getUser(userDTO);
-    }
+	/**
+	 * 根据用户名和密码查询对应的用户
+	 */
+	@Override
+	public JSONObject getUser(String username, String password) {
+		return loginDao.getUser(username, password);
+	}
 
-    @Override
-    public JSONObject getInfo() {
-        return null;
-    }
+	/**
+	 * 查询当前登录用户的权限等信息
+	 */
+	@Override
+	public JSONObject getInfo() {
+		//从session获取用户信息
+		Session session = SecurityUtils.getSubject().getSession();
+		JSONObject userInfo = (JSONObject) session.getAttribute(Constants.SESSION_USER_INFO);
+		String username = userInfo.getString("username");
+		JSONObject info = new JSONObject();
+		JSONObject userPermission = permissionService.getUserPermission(username);
+		session.setAttribute(Constants.SESSION_USER_PERMISSION, userPermission);
+		info.put("userPermission", userPermission);
+		return CommonUtil.successJson(info);
+	}
 
-    @Override
-    public JSONObject logout() {
-        return null;
-    }
+	/**
+	 * 退出登录
+	 */
+	@Override
+	public JSONObject logout() {
+		try {
+			Subject currentUser = SecurityUtils.getSubject();
+			currentUser.logout();
+		} catch (Exception e) {
+		}
+		return CommonUtil.successJson();
+	}
 }
